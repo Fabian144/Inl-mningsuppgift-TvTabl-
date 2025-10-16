@@ -7,7 +7,7 @@ ANIMATION = {
 };
 
 // Ändra värdet för att styra vilken meny-animation som ska användas
-window.MENU_ANIMATION_MODE ??= ANIMATION.TIMER; // ANIMATION.TIMER (Default) = ingen animation (G-nivå), ANIMATION.TIMER // (VG-nivå), ANIMATION.ALTERNATIVE // ytterligare ett alternativ (VG-nivå);
+window.MENU_ANIMATION_MODE ??= ANIMATION.ALTERNATIVE; // ANIMATION.TIMER (Default) = ingen animation (G-nivå), ANIMATION.TIMER // (VG-nivå), ANIMATION.ALTERNATIVE // ytterligare ett alternativ (VG-nivå);
 
 /*
  Användningsexempel för animationer beroende på inställning
@@ -48,5 +48,15 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
   }
 } else if (window.MENU_ANIMATION_MODE === ANIMATION.ALTERNATIVE) {
   console.log("Meny-animation med alternativ metod används");
+
+  function toggleMenu() {
+    const menu = document.querySelector("ul.menu");
+
+    menu.style.transition = "left, 500ms";
+
+    menu.classList.contains("menu--show")
+      ? menu.classList.remove("menu--show")
+      : menu.classList.add("menu--show");
+  }
 }
 //--------------------------
