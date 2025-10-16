@@ -17,17 +17,32 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 } else if (window.MENU_ANIMATION_MODE === ANIMATION.TIMER) {
   console.log("Meny-animation med timer används");
 
+  const originalMenuPosition = parseFloat(
+    window.getComputedStyle(document.querySelector("ul.menu")).left
+  ); // parseFloat returnerar alla float värden som är före en annan värdetyp ur en sträng, i det här fallet -300 ur "-300px"
+
   function toggleMenu() {
-    const menuPositionLeft = window.getComputedStyle(document.querySelector("ul.menu")).left;
+    let menuPositionLeft = parseFloat(
+      window.getComputedStyle(document.querySelector("ul.menu")).left
+    );
 
-    if (parseFloat(menuPositionLeft) < 0) { // parseFloat returnerar alla float värden som är före en annan värdetyp ur en sträng, i det här fallet -300 ur "-300px"
-      let pos = parseFloat(menuPositionLeft);
-
-      const menuIntervalAnimation = setInterval(() => {
-        pos += 15;
-        document.querySelector("ul.menu").style.left = pos + "px";
-
-      if (pos > -1) clearInterval(menuIntervalAnimation);
+    if (menuPositionLeft < 0) {
+      const menuIntervalAnimationIn = setInterval(() => {
+        if (menuPositionLeft < 0) {
+          menuPositionLeft += 20;
+          document.querySelector("ul.menu").style.left = menuPositionLeft + "px";
+        } else {
+          clearInterval(menuIntervalAnimationIn);
+        }
+      }, 0);
+    } else {
+      const menuIntervalAnimationOut = setInterval(() => {
+        if (menuPositionLeft > originalMenuPosition) {
+          menuPositionLeft -= 20;
+          document.querySelector("ul.menu").style.left = menuPositionLeft + "px";
+        } else {
+          clearInterval(menuIntervalAnimationOut);
+        }
       }, 0);
     }
   }
