@@ -27,6 +27,8 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
     );
 
     if (menuPositionLeft < 0) {
+      document.querySelector("i").classList.add("fa-times");
+
       const menuIntervalAnimationIn = setInterval(() => {
         if (menuPositionLeft < 0) {
           menuPositionLeft += 20;
@@ -36,6 +38,8 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
         }
       }, 0);
     } else {
+      document.querySelector("i").classList.remove("fa-times");
+
       const menuIntervalAnimationOut = setInterval(() => {
         if (menuPositionLeft > originalMenuPosition) {
           menuPositionLeft -= 20;
@@ -51,12 +55,17 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 
   function toggleMenu() {
     const menu = document.querySelector("ul.menu");
+    const menuIcon = document.querySelector("i");
 
     menu.style.transition = "left, 500ms";
 
-    menu.classList.contains("menu--show")
-      ? menu.classList.remove("menu--show")
-      : menu.classList.add("menu--show");
+    if (!menu.classList.contains("menu--show")) {
+      menu.classList.add("menu--show");
+      menuIcon.classList.add("fa-times");
+    } else {
+      menu.classList.remove("menu--show");
+      menuIcon.classList.remove("fa-times");
+    }
   }
 }
 //--------------------------
