@@ -84,9 +84,13 @@ async function fetchData(url) {
 function setChannel(channelName) {
   document.querySelector("#js-title").innerText = channelName;
 
+	let ul = document.createElement("ul");
+	document.querySelector("#js-schedule").appendChild(ul);
+	document.querySelector("#js-schedule > ul").classList.add("list-group", "list-group-flush");
+
   fetchData(`./data/${channelName}.json`).then((data) => {
     const programNamesAndTimes = data.map((programNameAndTime) => ({
-			
+
       start: `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`,
       name: programNameAndTime.name,
     }));
@@ -95,13 +99,12 @@ function setChannel(channelName) {
 
     programNamesAndTimes.forEach((programNameAndTime) => {
       list +=
-			`<ul class="list-group list-group-flush">
-			<li class="list-group-item">
+			`<li class="list-group-item">
 				<strong>${programNameAndTime.start}</strong>
 				<div>${programNameAndTime.name}</div>
-			</li> 
-		</ul> `;
+			</li>`;
     });
-    document.querySelector("#js-schedule").innerHTML = list;
+
+    document.querySelector(".list-group").innerHTML = list;
   });
 }
