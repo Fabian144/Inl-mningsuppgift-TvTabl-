@@ -27,7 +27,7 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
     );
 
     if (menuPositionLeft < 0) {
-      document.querySelector("i").classList.add("fa-times");
+      document.querySelector(".menu-icon > .fas").classList.add("fa-times");
 
       const menuIntervalAnimationIn = setInterval(() => {
         if (menuPositionLeft < 0) {
@@ -38,7 +38,7 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
         }
       }, 0);
     } else {
-      document.querySelector("i").classList.remove("fa-times");
+      document.querySelector(".menu-icon > .fas").classList.remove("fa-times");
 
       const menuIntervalAnimationOut = setInterval(() => {
         if (menuPositionLeft > originalMenuPosition) {
@@ -55,7 +55,7 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 
   function toggleMenu() {
     const menu = document.querySelector("ul.menu");
-    const menuIcon = document.querySelector("i");
+    const menuIcon = document.querySelector(".menu-icon > .fas");
 
     menu.style.transition = "left, 500ms";
 
@@ -69,3 +69,39 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
   }
 }
 //--------------------------
+
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Status: ${response.status}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch failed:", error);
+  }
+}
+
+function setChannel(channelName) {
+  document.querySelector("#js-title").innerText = channelName;
+
+  fetchData(`./data/${channelName}.json`).then((data) => {
+    const programNamesAndTimes = data.map((programNameAndTime) => ({
+			
+      start: `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`,
+      name: programNameAndTime.name,
+    }));
+
+    let list = "";
+
+    programNamesAndTimes.forEach((programNameAndTime) => {
+      list +=
+			`<ul class="list-group list-group-flush">
+			<li class="list-group-item">
+				<strong>${programNameAndTime.start}</strong>
+				<div>${programNameAndTime.name}</div>
+			</li> 
+		</ul> `;
+    });
+    document.querySelector("#js-schedule").innerHTML = list;
+  });
+}
