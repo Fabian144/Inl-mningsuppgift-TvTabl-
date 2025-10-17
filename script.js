@@ -71,6 +71,9 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 //--------------------------
 
 async function fetchData(url) {
+	document.querySelector("#js-loading").classList.remove("hidden");
+	if (document.querySelector(".show-previous")) document.querySelector(".show-previous").classList.add("hidden");
+
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Status: ${response.status}`);
@@ -84,27 +87,32 @@ async function fetchData(url) {
 function setChannel(channelName) {
   document.querySelector("#js-title").innerText = channelName;
 
-	let ul = document.createElement("ul");
-	document.querySelector("#js-schedule").appendChild(ul);
-	document.querySelector("#js-schedule > ul").classList.add("list-group", "list-group-flush");
+	let list = `
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item show-previous">Visa tidigare program</li>
+	</ul>`;
+	document.querySelector("#js-schedule").innerHTML = list;
 
-  fetchData(`./data/${channelName}.json`).then((data) => {
-    const programNamesAndTimes = data.map((programNameAndTime) => ({
+  fetchData(`./data/${channelName}.json`).then((dataFromFetch) => {
+    const programNamesAndTimes = dataFromFetch.map((programNameAndTime) => ({
 
       start: `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`,
       name: programNameAndTime.name,
     }));
 
-    let list = "";
+		let listItems = "";
 
     programNamesAndTimes.forEach((programNameAndTime) => {
-      list +=
+      listItems +=
 			`<li class="list-group-item">
 				<strong>${programNameAndTime.start}</strong>
 				<div>${programNameAndTime.name}</div>
 			</li>`;
     });
 
-    document.querySelector(".list-group").innerHTML = list;
+		document.querySelector(".list-group").innerHTML += listItems;
+
+		document.querySelector(".show-previous").classList.remove("hidden");
+		document.querySelector("#js-loading").classList.add("hidden");
   });
 }
