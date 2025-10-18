@@ -72,7 +72,7 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 
 async function fetchData(url) {
 	document.querySelector("#js-loading").classList.remove("hidden");
-	if (document.querySelector(".show-previous")) document.querySelector(".show-previous").classList.add("hidden");
+	document.querySelector(".show-previous").classList.add("hidden");
 
   try {
     const response = await fetch(url);
@@ -94,25 +94,31 @@ function setChannel(channelName) {
 	document.querySelector("#js-schedule").innerHTML = list;
 
   fetchData(`./data/${channelName}.json`).then((dataFromFetch) => {
-    const programNamesAndTimes = dataFromFetch.map((programNameAndTime) => ({
+    const programNamesAndTimes = dataFromFetch.map(programNameAndTime => ({
 
-      start: `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`,
+      start: new Date(programNameAndTime.start),
       name: programNameAndTime.name,
     }));
+		
+		programNamesAndTimes.sort((a, b) => {return a.start-b.start});
 
 		let listItems = "";
 
     programNamesAndTimes.forEach((programNameAndTime) => {
+			let programTime = `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`;
+
       listItems +=
 			`<li class="list-group-item">
-				<strong>${programNameAndTime.start}</strong>
+				<strong>${programTime}</strong>
 				<div>${programNameAndTime.name}</div>
 			</li>`;
     });
 
 		document.querySelector(".list-group").innerHTML += listItems;
 
-		document.querySelector(".show-previous").classList.remove("hidden");
 		document.querySelector("#js-loading").classList.add("hidden");
+		document.querySelector(".show-previous").classList.remove("hidden");
   });
 }
+
+setChannel("SVT 1");
