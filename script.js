@@ -71,8 +71,8 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 //--------------------------
 
 async function fetchData(url) {
-	document.querySelector("#js-loading").classList.remove("hidden");
-	document.querySelector(".show-previous").classList.add("hidden");
+  document.querySelector("#js-loading").classList.remove("hidden");
+  document.querySelector(".show-previous").classList.add("hidden");
 
   try {
     const response = await fetch(url);
@@ -87,38 +87,59 @@ async function fetchData(url) {
 function setChannel(channelName) {
   document.querySelector("#js-title").innerText = channelName;
 
-	let list = `
-	<ul class="list-group list-group-flush">
+  let list = `<ul class="list-group list-group-flush">
 		<li class="list-group-item show-previous">Visa tidigare program</li>
 	</ul>`;
-	document.querySelector("#js-schedule").innerHTML = list;
+  document.querySelector("#js-schedule").innerHTML = list;
 
-  fetchData(`./data/${channelName}.json`).then((dataFromFetch) => {
-    const programNamesAndTimes = dataFromFetch.map(programNameAndTime => ({
+  fetchData(`./data/${channelName}.json`).then(useData);
 
-      start: new Date(programNameAndTime.start),
-      name: programNameAndTime.name,
+  function useData(dataFromFetch) {
+    const programs = dataFromFetch.map((program) => ({
+      start: new Date(program.start),
+      name: program.name,
     }));
-		
-		programNamesAndTimes.sort((a, b) => {return a.start-b.start});
 
-		let listItems = "";
-
-    programNamesAndTimes.forEach((programNameAndTime) => {
-			let programTime = `${new Date(programNameAndTime.start).getHours()}:${new Date(programNameAndTime.start).getMinutes()}`;
-
-      listItems +=
-			`<li class="list-group-item">
-				<strong>${programTime}</strong>
-				<div>${programNameAndTime.name}</div>
-			</li>`;
+    programs.sort((firstProgram, secondProgram) => {
+      return firstProgram.start - secondProgram.start;
     });
 
-		document.querySelector(".list-group").innerHTML += listItems;
+    let listItems = ``;
 
-		document.querySelector("#js-loading").classList.add("hidden");
-		document.querySelector(".show-previous").classList.remove("hidden");
-  });
+    programs.forEach((program) => {
+      if (program.start < new Date("2021-02-10T19:00:00+01:00")) {
+        listItems += `<li class="list-group-item hidden">
+					<strong>${program.start.getHours()}:${program.start.getMinutes()}</strong>
+					<div>${program.name}</div>
+				</li>`;
+      } else {
+        listItems += `<li class="list-group-item">
+				<strong>${program.start.getHours()}:${program.start.getMinutes()}</strong>
+				<div>${program.name}</div>
+			</li>`;
+      }
+    });
+
+    document.querySelector(".list-group").innerHTML += listItems;
+
+    let firstProgram = document.querySelectorAll(".list-group-item")[1];
+    if (firstProgram.classList.contains("hidden")) {
+      document.querySelector(".show-previous").classList.remove("hidden");
+    }
+    document.querySelector(".show-previous").addEventListener("click", showPrevious);
+
+    document.querySelector("#js-loading").classList.add("hidden");
+  }
+
+  function showPrevious() {
+    let listItems = document.querySelectorAll(".list-group-item");
+
+    listItems.forEach((listItem) => {
+      listItem.classList.remove("hidden");
+    });
+
+    document.querySelector(".show-previous").classList.add("hidden");
+  }
 }
 
 setChannel("SVT 1");
