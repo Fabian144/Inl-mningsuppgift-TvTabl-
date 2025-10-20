@@ -134,8 +134,8 @@ function setChannel(channelName) {
 
     // Går igenom alla program objekt och sparar dem i HTML format i övre variabeln
     programs.forEach((program) => {
-      /* Elementen läggs till med en klass som gömmer dem om programstartens datum och tid är mindre än (alltså före) ett
-			simulerat datum */
+      /* Elementen läggs till med en klass som gömmer dem om programstartens datum och tid är
+			mindre än (alltså före) ett simulerat datum */
       if (program.start < new Date("2021-02-10T19:00:00+01:00")) {
         listItems += `<li class="list-group-item hidden">
 					<strong>${formatTime(program.start.getHours(), program.start.getMinutes())}</strong>
