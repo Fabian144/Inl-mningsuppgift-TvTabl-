@@ -85,13 +85,15 @@ if (window.MENU_ANIMATION_MODE === ANIMATION.NONE) {
 //--------------------------
 
 async function fetchData(url) {
-  // Visar loading gif medans fetch pågår
+  // Visar loading gif innan någon data laddats in
   document.querySelector("#js-loading").classList.remove("hidden");
 
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Status: ${response.status}`);
     const data = await response.json();
+		// Gömmer loading gif när datan lyckats ladda in
+    document.querySelector("#js-loading").classList.add("hidden");
     return data;
   } catch (error) {
     console.error("Fetch failed:", error);
@@ -110,7 +112,7 @@ function setChannel(channelName) {
   fetchData(`./data/${channelName}.json`).then(useData);
 
   function useData(dataFromFetch) {
-    // Varje objekt från datat läggs in i variabeln med bara nycklarna "start" och "name"
+    // Varje objekt från datat läggs in i variabeln med bara nyckelvärdeparen som ska användas på sidan
     const programs = dataFromFetch.map((program) => ({
       start: new Date(program.start),
       name: program.name,
@@ -121,37 +123,41 @@ function setChannel(channelName) {
       return firstProgram.start - secondProgram.start;
     });
 
-    // Funktion för tiden då programmen startar, så timmarna och minuterna visar tvåsiffriga tal även om de är under 10
-    function formatTime(time) {
-      if (time < 10) time = "0" + time;
-      return time;
+    // Funktion för programstarts tiden, så timmarna och minuterna visar tvåsiffriga tal även om de är under 10
+    function formatTime(hours, minutes) {
+      if (hours < 10) hours = "0" + hours;
+      if (minutes < 10) minutes = "0" + minutes;
+      return `${hours}:${minutes}`;
     }
 
     let listItems = ``;
 
+    // Går igenom alla program objekt och sparar dem i HTML format i övre variabeln
     programs.forEach((program) => {
-      if (program.start < new Date("2021-02-10T19:00:00+01:00")) {
+      /* Elementen läggs till med en klass som gömmer dem om programstartens datum och tid är mindre än (alltså före) nuvarande
+			tiden men med ett simulerat datum */
+      if (program.start < new Date("2021-02-10")) {
         listItems += `<li class="list-group-item hidden">
-					<strong>${formatTime(program.start.getHours())}:${formatTime(program.start.getMinutes())}</strong>
+					<strong>${formatTime(program.start.getHours(), program.start.getMinutes())}</strong>
 					<div>${program.name}</div>
 				</li>`;
       } else {
         listItems += `<li class="list-group-item">
-				<strong>${formatTime(program.start.getHours())}:${formatTime(program.start.getMinutes())}</strong>
+				<strong>${formatTime(program.start.getHours(), program.start.getMinutes())}</strong>
 				<div>${program.name}</div>
 			</li>`;
       }
     });
 
+    // Sparade program objekten i HTML format läggs in i ett existerande HTML element via variabeln
     document.querySelector(".list-group").innerHTML += listItems;
 
+    // Knappen "Visa tidigare program" visas och fungerar bara om minst ett av programmen är gömda, alltså redan sända
     let firstProgram = document.querySelectorAll(".list-group-item")[1];
     if (firstProgram.classList.contains("hidden")) {
       document.querySelector(".show-previous").classList.remove("hidden");
     }
     document.querySelector(".show-previous").addEventListener("click", showPrevious);
-
-    document.querySelector("#js-loading").classList.add("hidden");
   }
 
   function showPrevious() {
