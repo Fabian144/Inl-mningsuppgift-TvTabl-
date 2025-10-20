@@ -92,8 +92,6 @@ async function fetchData(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Status: ${response.status}`);
     const data = await response.json();
-		// Gömmer loading gif när datan lyckats ladda in
-    document.querySelector("#js-loading").classList.add("hidden");
     return data;
   } catch (error) {
     console.error("Fetch failed:", error);
@@ -151,6 +149,9 @@ function setChannel(channelName) {
 
     // Sparade program objekten i HTML format läggs in i ett existerande HTML element via variabeln
     document.querySelector(".list-group").innerHTML += listItems;
+
+    // Gömmer loading gif när datan både laddats in och visas upp på sidan
+    document.querySelector("#js-loading").classList.add("hidden");
 
     // Knappen "Visa tidigare program" visas och fungerar bara om minst ett av programmen är gömda, alltså redan sända
     let firstProgram = document.querySelectorAll(".list-group-item")[1];
