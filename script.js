@@ -136,7 +136,7 @@ function setChannel(channelName) {
     programs.forEach((program) => {
       /* Elementen läggs till med en klass som gömmer dem om programstartens datum och tid är mindre än (alltså före) nuvarande
 			tiden men med ett simulerat datum */
-      if (program.start < new Date("2021-02-10")) {
+      if (program.start < new Date("2021-02-10T19:00:00+01:00")) {
         listItems += `<li class="list-group-item hidden">
 					<strong>${formatTime(program.start.getHours(), program.start.getMinutes())}</strong>
 					<div>${program.name}</div>
