@@ -101,7 +101,7 @@ async function fetchData(url) {
 function setChannel(channelName) {
   document.querySelector("#js-title").innerText = channelName;
 
-  // Skapar ul elementet för programmen och "tidigare program" knappen
+  // Skapar ul elementet för programmen och lägger in "tidigare program" knappen
   let list = `<ul class="list-group list-group-flush">
 		<li class="list-group-item show-previous hidden">Visa tidigare program</li>
 	</ul>`;
