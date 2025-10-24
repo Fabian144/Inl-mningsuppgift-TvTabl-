@@ -101,16 +101,18 @@ async function fetchData(url) {
 function setChannel(channelName) {
   document.querySelector("#js-title").innerText = channelName;
 
-  // Skapar ul elementet för programmen och lägger in "tidigare program" knappen
+  //------ Skapar ul elementet för programmen och lägger in "tidigare program" knappen
   let list = `<ul class="list-group list-group-flush">
 		<li class="list-group-item show-previous hidden">Visa tidigare program</li>
 	</ul>`;
+	
   document.querySelector("#js-schedule").innerHTML = list;
+	//------
 
   fetchData(`./data/${channelName}.json`).then(useData);
 
   function useData(dataFromFetch) {
-    // Varje objekt från datat läggs in i variabeln med bara nyckelvärdeparen som ska användas på sidan
+    // Varje objekt från datat läggs in i variabeln med bara nyckelvärdeparen som ska användas i koden och sedan visas up
     const programs = dataFromFetch.map((program) => ({
       start: new Date(program.start),
       name: program.name,
@@ -130,7 +132,7 @@ function setChannel(channelName) {
 
     let listItems = ``;
 
-    // Går igenom alla program objekt och sparar dem i HTML format i övre variabeln
+    //------ Går igenom alla program objekt och sparar dem i HTML format i övre variabeln
     programs.forEach((program) => {
       /* Elementen läggs till med en klass som gömmer dem om programstartens datum och tid är
 			mindre än (alltså före) ett simulerat datum */
@@ -146,6 +148,7 @@ function setChannel(channelName) {
 			</li>`;
       }
     });
+		//------
 
     // Sparade program objekten i HTML format läggs in i ett existerande HTML element via variabeln
     document.querySelector(".list-group").innerHTML += listItems;
@@ -153,12 +156,15 @@ function setChannel(channelName) {
     // Gömmer loading gif när datan både laddats in och visas upp på sidan
     document.querySelector("#js-loading").classList.add("hidden");
 
-    // Knappen "Visa tidigare program" visas och fungerar bara om minst ett av programmen är gömda, alltså redan sända
+    //------ Knappen "Visa tidigare program" visas och fungerar bara om minst ett av programmen är gömda, alltså redan sända
     let firstProgram = document.querySelectorAll(".list-group-item")[1];
+
     if (firstProgram.classList.contains("hidden")) {
       document.querySelector(".show-previous").classList.remove("hidden");
     }
+
     document.querySelector(".show-previous").addEventListener("click", showPrevious);
+		//------
   }
 
   function showPrevious() {
